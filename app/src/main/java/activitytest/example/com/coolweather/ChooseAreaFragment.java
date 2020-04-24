@@ -23,6 +23,7 @@ import java.util.List;
 import activitytest.example.com.coolweather.db.City;
 import activitytest.example.com.coolweather.db.County;
 import activitytest.example.com.coolweather.db.Province;
+import activitytest.example.com.coolweather.gson.Weather;
 import activitytest.example.com.coolweather.util.HttpUtil;
 import activitytest.example.com.coolweather.util.Utility;
 import okhttp3.Call;
@@ -93,10 +94,17 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY){
                     String weatherId = countyList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    if(getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
